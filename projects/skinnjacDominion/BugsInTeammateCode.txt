@@ -1,0 +1,202 @@
+Bug report-1
+Title: BigsInTeammateCode (Smithy card bug)
+
+Bug Number: 0001
+
+Class: System Error
+
+Date: 3-4-18
+Reported By: Thomas Buteau
+Email: buteaut@oregonstate.edu
+
+Is it reproducible: Yes
+
+Severity: Medium. This bug does not crash the program but does directly affect gameplay. This bug also occurs any time a player uses the Smithy card so it may occur with high frequency in a game.
+
+Priority: High. Bug directly affects gameplay, occurs any time a player plays the Smithy card, and should be relatively easy to fix.
+
+Description
+===========
+
+When played the smithy card is supposed to take three cards from the player's deck and put them into the player's hand. The program only takes one card from the player's deck and adds it to the player's hand.
+
+Steps to Produce/Reproduce
+--------------------------
+
+Play the smithy card.
+
+Expected Results
+----------------
+
+If performed when the player has four cards in hand, the player should have seven cards after Smithy has been played.
+
+Actual Results
+--------------
+
+The player had five cards after Smithy was played.
+
+Code used to test
+-----------------
+
+#include "dominion.h"
+#include "dominion_helpers.h"
+#include <string.h>
+#include <stdio.h>
+#include <assert.h>
+#include "rngs.h"
+#include <stdlib.h>
+
+
+int main() {
+	int i, j;
+	int failure = 0;
+	struct gameState test1, original;
+	int seed = 1000;
+	int players = 2;
+	int k[10] = { smithy, adventurer, village, great_hall, minion, mine, cutpurse, sea_hag, tribute, council_room };
+	int choice1, choice2, choice3 = 0;
+
+	initializeGame(players, k, seed, &test1);
+	memcpy(&original, &test1, sizeof(struct gameState));
+
+	cardEffect(4, 0, 0, 0, &test1, 0, 0);
+	if (test1.handCount[0] == original.handCount[0] + 2) {
+		printf("Passed - Player 0 hand count is %d and should be %d.\n", test1.handCount[0], original.handCount[0] + 2);
+	}
+	else {
+		printf("Failed - Player 0 hand count is %d and should be %d.\n", test1.handCount[0], original.handCount[0] + 2);
+		failure++;
+	}
+
+	if (test1.deckCount[0] == original.deckCount[0] - 3) {
+		printf("Passed - Player 0 deck count is %d and should be %d.\n", test1.deckCount[0], original.deckCount[0] - 3);
+	}
+	else {
+		printf("Failed - Player 0 deck count is %d and should be %d.\n", test1.deckCount[0], original.deckCount[0] - 3);
+		failure++;
+	}
+
+	if (test1.handCount[1] == original.handCount[1]) {
+		printf("Passed - Player 1 hand count is %d and should be %d.\n", test1.handCount[1], original.handCount[1]);
+	}
+	else {
+		printf("Failed - Player 1 hand count is %d and should be %d.\n", test1.handCount[1], original.handCount[1]);
+		failure++;
+	}
+
+	if (test1.deckCount[1] == original.deckCount[1]) {
+		printf("Passed - Player 1 deck count is %d and should be %d.\n", test1.deckCount[1], original.deckCount[1]);
+	}
+	else {
+		printf("Failed - Player 1 deck count is %d and should be %d.\n", test1.deckCount[1], original.deckCount[1]);
+		failure++;
+	}
+
+	if (failure == 0) printf("All tests successful.\n");
+	else printf("%d tests failed.\n", failure);
+
+	return 0;
+}
+
+
+Bug report-2
+Title: BigsInTeammateCode (Adventurer card bug)
+
+Bug Number: 0002
+
+Class: System Error
+
+Date: 3-4-18
+Reported By: Thomas Buteau
+Email: buteaut@oregonstate.edu
+
+Is it reproducible: Yes
+
+Severity: Medium. This bug does not crash the program but does directly affect gameplay. This bug also occurs any time a player uses the Adventurer card so it may occur with high frequency in a game.
+
+Priority: High. Bug directly affects gameplay, occurs any time a player plays the Adventurer card, and should be relatively easy to fix.
+
+Description
+===========
+
+When played the Adventurer card is supposed to reveal cards from the player's deck until two Treasure cards are found. Then it adds those Treasure cards to the player's hand and discards the other drawn cards. The program only takes one Treasure card from the player's deck and adds it to the player's hand.
+
+Steps to Produce/Reproduce
+--------------------------
+
+Play the Adventurer card.
+
+Expected Results
+----------------
+
+If performed when the player has four cards in hand, the player should have six cards after Adventurer has been played.
+
+Actual Results
+--------------
+
+The player had five cards after Adventurer was played.
+
+Code used to test
+-----------------
+#include "dominion.h"
+#include "dominion_helpers.h"
+#include <string.h>
+#include <stdio.h>
+#include <assert.h>
+#include "rngs.h"
+#include <stdlib.h>
+
+
+int main() {
+	int failure = 0;
+
+	struct gameState test1, original;
+	int seed = 1000;
+	int players = 2;
+	int k[10] = { smithy, adventurer, village, great_hall, minion, mine, cutpurse,
+		sea_hag, tribute, council_room };
+	int choice1, choice2, choice3 = 0;
+
+	initializeGame(players, k, seed, &test1);
+	memcpy(&original, &test1, sizeof(struct gameState));
+
+	cardEffect(6, 0, 0, 0, &test1, 0, 0);
+
+	//tests
+	if (test1.handCount[0] == original.handCount[0] + 2) {
+		printf("Passed - Player 0 hand count is %d and should be %d.\n", test1.handCount[0], original.handCount[0] + 1);
+	}
+	else {
+		printf("Failed - Player 0 hand count is %d and should be %d.\n", test1.handCount[0], original.handCount[0] + 1);
+		failure++;
+	}
+
+	if (test1.handCount[1] == original.handCount[1]) {
+		printf("Passed - Player 1 hand count is %d and should be %d.\n", test1.handCount[1], original.handCount[1]);
+	}
+	else {
+		printf("Failed - Player 1 hand count is %d and should be %d.\n", test1.handCount[1], original.handCount[1]);
+		failure++;
+	}
+
+	if (test1.deckCount[0] <= original.deckCount[0] - 2) {
+		printf("Passed - Player 0 deck count is %d and should be less than or equal to %d.\n", test1.deckCount[0], original.deckCount[0] - 2);
+	}
+	else {
+		printf("Failed - Player 0 deck count is %d and should be less than or equal to %d.\n", test1.deckCount[0], original.deckCount[0] - 2);
+		failure++;
+	}
+
+	if (test1.deckCount[1] == original.deckCount[1]) {
+		printf("Passed - Player 1 deck count is %d and should be %d.\n", test1.deckCount[1], original.deckCount[1]);
+	}
+	else {
+		printf("Failed - Player 1 deck count is %d and should be %d.\n", test1.deckCount[1], original.deckCount[1]);
+		failure++;
+	}
+
+	if (failure == 0) printf("All tests successful.\n");
+	else printf("%d tests failed.\n", failure);
+
+	return 0;
+}

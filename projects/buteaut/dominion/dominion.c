@@ -1328,7 +1328,7 @@ int smithyPlay(struct gameState *state, int handPos) {
 	int i;
 	int currentPlayer = whoseTurn(state);
 
-	for(i=0; i<1; i++) { //bug introduced: correct logic is i<3 not i<1
+	for(i=0; i<3; i++) { //bug introduced: correct logic is i<3 not i<1
 		drawCard(currentPlayer, state);
 	}
 	//discard card from hand
